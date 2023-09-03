@@ -1,0 +1,31 @@
+{
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "Hood": {
+          "Hood controller": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "DB": {
+          "open": true
+        },
+        "open": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo"
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT3)",
+    "serverTeam": "9485"
+  },
+  "NetworkTables View": {
+    "visible": false
+  }
+}
