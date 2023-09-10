@@ -3,19 +3,35 @@ package frc.robot.subsystems.cargoHandling;
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.IndexerConstants.*;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenixpro.configs.MotorOutputConfigs;
+import com.ctre.phoenixpro.configs.TalonFXConfigurator;
+import com.ctre.phoenixpro.controls.ControlRequest;
+import com.ctre.phoenixpro.controls.VoltageOut;
+// import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenixpro.hardware.TalonFX;
+import com.ctre.phoenixpro.signals.InvertedValue;
+import com.ctre.phoenixpro.signals.NeutralModeValue;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Indexer extends SubsystemBase {
-  private WPI_TalonFX m_talon = new WPI_TalonFX(kIndexerTalonPort);
+  private TalonFX m_talon = new TalonFX(kIndexerTalonPort);
 
   private final SimpleMotorFeedforward m_feedforward =
       new SimpleMotorFeedforward(
@@ -40,37 +56,18 @@ public class Indexer extends SubsystemBase {
   private double outputVoltage = 0;
 
   public Indexer() {
-
-    TalonFXConfiguration indexerTalonConfig = new TalonFXConfiguration();
-    indexerTalonConfig.voltageCompSaturation = Constants.kNominalVoltage;
-    indexerTalonConfig.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_1Ms;
-    indexerTalonConfig.velocityMeasurementWindow = 1;
-
-    indexerTalonConfig.supplyCurrLimit =
-        new SupplyCurrentLimitConfiguration(
-            true,
-            kIndexerSupplyCurrentLimitAmps,
-            kIndexerSupplyCurrentThresholdAmps,
-            kIndexerSupplyCurrentThresholdTimeSecs);
-
-    indexerTalonConfig.statorCurrLimit =
-        new StatorCurrentLimitConfiguration(
-            true,
-            kIndexerStatorCurrentLimitAmps,
-            kIndexerStatorCurrentThresholdAmps,
-            kIndexerStatorCurrentThresholdTimeSecs);
-
-    m_talon.configAllSettings(indexerTalonConfig);
-    m_talon.setNeutralMode(NeutralMode.Brake);
-    m_talon.setInverted(true);
-    m_talon.enableVoltageCompensation(true);
+    TalonFXConfigurator talonFXConfiguator = m_talon.getConfigurator();
+    MotorOutputConfigs motorConfigs = new MotorOutputConfigs();
+    motorConfigs.Inverted = InvertedValue.Clockwise_Positive;
+    motorConfigs.NeutralMode = NeutralModeValue.Brake;
+    talonFXConfiguator.apply(motorConfigs);
   }
 
   /** @return the current velocity in rotations per second. */
   // @Log(name = "Current velocity (RPS)")
   
   public double getVelocityRotationsPerSecond() {
-    return m_talon.getSelectedSensorVelocity()
+    return m_talon.getVelocity().getValue()
         / (kIndexerGearRatio * kFalconSensorUnitsPerRotation);
   }
 
@@ -124,6 +121,9 @@ public class Indexer extends SubsystemBase {
       m_feedforwardOutput = feedforwardOutput;
     }
 
+    // m_talon.setVoltage(outputVoltage);
+    // m_talon.set(ControlMode.PercentOutput, .2);
+
     if (outputVoltage != m_lastOutputVoltage) {
       m_talon.setVoltage(outputVoltage);
     }
@@ -133,6 +133,5 @@ public class Indexer extends SubsystemBase {
 
   public void periodic() {
     this.runControlLoop();
-    ;
   }
 }

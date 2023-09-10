@@ -7,14 +7,19 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenixpro.hardware.TalonFX;
+import com.ctre.phoenixpro.signals.InvertedValue;
+import com.ctre.phoenixpro.signals.NeutralModeValue;
+import com.ctre.phoenixpro.configs.MotorOutputConfigs;
+import com.ctre.phoenixpro.configs.TalonFXConfigurator;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 
 public class Feeder extends SubsystemBase {
-  private final WPI_TalonFX m_talon = new WPI_TalonFX(kFeederTalonPort);
+  private final TalonFX m_talon = new TalonFX(kFeederTalonPort);
 
   private final SimpleMotorFeedforward m_feedforward =
       new SimpleMotorFeedforward(
@@ -34,33 +39,38 @@ public class Feeder extends SubsystemBase {
   private double m_lastOutputVoltage = 0;
 
   public Feeder() {
-    TalonFXConfiguration talonConfig = new TalonFXConfiguration();
+    // TalonFXConfiguration talonConfig = new TalonFXConfiguration();
 
-    talonConfig.voltageCompSaturation = Constants.kNominalVoltage;
-    talonConfig.supplyCurrLimit =
-        new SupplyCurrentLimitConfiguration(
-            true,
-            kFeederSupplyCurrentLimitAmps,
-            kFeederSupplyCurrentThresholdAmps,
-            kFeederSupplyCurrentThresholdTimeSecs);
-    talonConfig.statorCurrLimit =
-        new StatorCurrentLimitConfiguration(
-            true,
-            kFeederStatorCurrentLimitAmps,
-            kFeederStatorCurrentThresholdAmps,
-            kFeederStatorCurrentThresholdTimeSecs);
+    // talonConfig.voltageCompSaturation = Constants.kNominalVoltage;
+    // talonConfig.supplyCurrLimit =
+    //     new SupplyCurrentLimitConfiguration(
+    //         true,
+    //         kFeederSupplyCurrentLimitAmps,
+    //         kFeederSupplyCurrentThresholdAmps,
+    //         kFeederSupplyCurrentThresholdTimeSecs);
+    // talonConfig.statorCurrLimit =
+    //     new StatorCurrentLimitConfiguration(
+    //         true,
+    //         kFeederStatorCurrentLimitAmps,
+    //         kFeederStatorCurrentThresholdAmps,
+    //         kFeederStatorCurrentThresholdTimeSecs);
 
-    m_talon.configAllSettings(talonConfig);
+    // m_talon.configAllSettings(talonConfig);
 
-    m_talon.setInverted(true);
-    m_talon.enableVoltageCompensation(true);
-    m_talon.setNeutralMode(NeutralMode.Brake);
+    // m_talon.setInverted(true);
+    // m_talon.enableVoltageCompensation(true);
+    // m_talon.setNeutralMode(NeutralMode.Brake);
+    TalonFXConfigurator talonFXConfiguator = m_talon.getConfigurator();
+    MotorOutputConfigs motorConfigs = new MotorOutputConfigs();
+    motorConfigs.Inverted = InvertedValue.Clockwise_Positive;
+    motorConfigs.NeutralMode = NeutralModeValue.Brake;
+    talonFXConfiguator.apply(motorConfigs);
   }
 
   /** @return the current velocity in rotations per second. */
 
   public double getVelocityRotationsPerSecond() {
-    return m_talon.getSelectedSensorVelocity()
+    return m_talon.getVelocity().getValue()
         / (kFeederGearRatio * kFalconSensorUnitsPerRotation * 10);
   }
 

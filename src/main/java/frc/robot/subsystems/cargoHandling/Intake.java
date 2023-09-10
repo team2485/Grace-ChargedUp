@@ -7,17 +7,20 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenixpro.configs.MotorOutputConfigs;
+import com.ctre.phoenixpro.configs.TalonFXConfigurator;
+import com.ctre.phoenixpro.hardware.TalonFX;
+import com.ctre.phoenixpro.signals.InvertedValue;
+import com.ctre.phoenixpro.signals.NeutralModeValue;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 
 public class Intake extends SubsystemBase  {
-  private final WPI_TalonFX m_talon = new WPI_TalonFX(kIntakeTalonPort);
+  private final TalonFX m_talon = new TalonFX(kIntakeTalonPort);
 
   
   private double tx = 0;
@@ -41,34 +44,40 @@ public class Intake extends SubsystemBase  {
   private double m_lastOutputVoltage = 0;
 
   public Intake() {
-    TalonFXConfiguration intakeTalonConfig = new TalonFXConfiguration();
-    intakeTalonConfig.voltageCompSaturation = Constants.kNominalVoltage;
-    intakeTalonConfig.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_1Ms;
-    intakeTalonConfig.velocityMeasurementWindow = 1;
+    // TalonFXConfiguration intakeTalonConfig = new TalonFXConfiguration();
+    // intakeTalonConfig.voltageCompSaturation = Constants.kNominalVoltage;
+    // intakeTalonConfig.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_1Ms;
+    // intakeTalonConfig.velocityMeasurementWindow = 1;
 
-    intakeTalonConfig.supplyCurrLimit =
-        new SupplyCurrentLimitConfiguration(
-            true,
-            kIntakeSupplyCurrentLimitAmps,
-            kIntakeSupplyCurrentThresholdAmps,
-            kIntakeSupplyCurrentThresholdTimeSecs);
-    intakeTalonConfig.statorCurrLimit =
-        new StatorCurrentLimitConfiguration(
-            true,
-            kIntakeStatorCurrentLimitAmps,
-            kIntakeStatorCurrentThresholdAmps,
-            kIntakeStatorCurrentThresholdTimeSecs);
+    // intakeTalonConfig.supplyCurrLimit =
+    //     new SupplyCurrentLimitConfiguration(
+    //         true,
+    //         kIntakeSupplyCurrentLimitAmps,
+    //         kIntakeSupplyCurrentThresholdAmps,
+    //         kIntakeSupplyCurrentThresholdTimeSecs);
+    // intakeTalonConfig.statorCurrLimit =
+    //     new StatorCurrentLimitConfiguration(
+    //         true,
+    //         kIntakeStatorCurrentLimitAmps,
+    //         kIntakeStatorCurrentThresholdAmps,
+    //         kIntakeStatorCurrentThresholdTimeSecs);
 
-    m_talon.configAllSettings(intakeTalonConfig);
-    m_talon.setNeutralMode(NeutralMode.Brake);
-    m_talon.enableVoltageCompensation(true);
-    m_talon.setInverted(true);
+    // m_talon.configAllSettings(intakeTalonConfig);
+    // m_talon.setNeutralMode(NeutralMode.Brake);
+    // m_talon.enableVoltageCompensation(true);
+    // m_talon.setInverted(true);
+
+    TalonFXConfigurator talonFXConfiguator = m_talon.getConfigurator();
+    MotorOutputConfigs motorConfigs = new MotorOutputConfigs();
+    motorConfigs.Inverted = InvertedValue.Clockwise_Positive;
+    motorConfigs.NeutralMode = NeutralModeValue.Brake;
+    talonFXConfiguator.apply(motorConfigs);
   }
 
   /** @return the current velocity in rotations per second. */
 
   public double getVelocityRotationsPerSecond() {
-    return m_talon.getSelectedSensorVelocity() / (kIntakeGearRatio * kFalconSensorUnitsPerRotation);
+    return m_talon.getVelocity().getValue() / (kIntakeGearRatio * kFalconSensorUnitsPerRotation);
   }
 
   /**
