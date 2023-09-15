@@ -64,7 +64,7 @@ public class DriveWithController extends CommandBase {
             * kTeleopMaxAngularSpeedRadiansPerSecond, kDriverRightXDeadband, 1, 0, 1) * rotSign;
 
     final boolean fieldRelative = m_fieldRelative.getAsBoolean();
-    m_drivetrain.drive(new Translation2d(xSpeed, ySpeed), rot, fieldRelative, true);
+    m_drivetrain.drive(new Translation2d(xSpeed, ySpeed), rot, fieldRelative, false);
 
     // System.out.println(m_driver.getRightTriggerAxis());
   }
