@@ -4,7 +4,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.subsystems.drive.CTREConfigs;
 import frc.util.Conversions;
 import frc.util.CTREModuleState;
@@ -48,9 +49,11 @@ public class SwerveModule {
     
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(driveKS, driveKV, driveKA); 
+    private GenericEntry working;
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
+        working = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" cancoder position", 0.0).getEntry();
         this.angleOffset = moduleConstants.angleOffset;
         
         /* Angle Encoder Config */
@@ -105,14 +108,16 @@ public class SwerveModule {
     private void setAngle(SwerveModuleState desiredState){
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
+        working.setDouble(angle.getDegrees());
         // mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle.getDegrees(), angleGearRatio));
-        mAngleMotor.setControl(mAnglePositionVoltage.withPosition(Conversions.degreesToFalcon(angle.getDegrees(), angleGearRatio)));
+        mAngleMotor.setControl(mAnglePositionVoltage.withPosition((angle.getDegrees() / 360) * angleGearRatio));
         // mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRadians()));
         lastAngle = angle;
     }
 
     private Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getPosition().getValue(), angleGearRatio));
+        //working.setDouble((mAngleMotor.getPosition().getValue() / angleGearRatio) * 360);
+        return Rotation2d.fromDegrees((mAngleMotor.getPosition().getValue() / angleGearRatio) * 360);
     }
 
     public Rotation2d getCanCoder(){
