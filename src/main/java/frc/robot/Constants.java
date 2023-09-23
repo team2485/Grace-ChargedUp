@@ -817,9 +817,9 @@ public final class Constants {
     // public static final double angleKD = chosenModule.angleKD;
     // public static final double angleKF = chosenModule.angleKF;
 
-    public static final double angleKP = 10;
-    public static final double angleKI = 0;
-    public static final double angleKD = 0;
+    public static final double angleKP = 15;
+    public static final double angleKI = .5;
+    public static final double angleKD = .25;
     public static final double angleKF = 0;
 
     /* Drive Motor PID Values */
@@ -868,7 +868,7 @@ public final class Constants {
     public static final class Mod2 { // TODO: This must be tuned to specific robot
       public static final int driveMotorID = 5;
       public static final int angleMotorID = 6;
-      public static final int canCoderID = 10;
+      public static final int canCoderID = 13;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-36.325378);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, true);
@@ -878,8 +878,8 @@ public final class Constants {
     public static final class Mod3 { // TODO: This must be tuned to specific robot
       public static final int driveMotorID = 7;
       public static final int angleMotorID = 8;
-      public static final int canCoderID = 13;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-56.407288);
+      public static final int canCoderID = 14;
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-56.407288 + 20);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, true);
     }

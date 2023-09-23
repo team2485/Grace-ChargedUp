@@ -35,7 +35,7 @@ public final class CTREConfigs {
         swerveAngleFXConfig.Slot0.kD = angleKD;
         
         // swerveAngleFXConfig.Slot0.kF = angleKF;
-        swerveAngleFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        swerveAngleFXConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimit = angleContinuousCurrentLimit;
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentThreshold = anglePeakCurrentLimit;
         swerveAngleFXConfig.CurrentLimits.SupplyTimeThreshold = anglePeakCurrentDuration;
@@ -56,14 +56,14 @@ public final class CTREConfigs {
         // swerveDriveFXConfig.openloopRamp = openLoopRamp;
         // swerveDriveFXConfig.closedloopRamp = closedLoopRamp;
         swerveDriveFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimit = driveContinuousCurrentLimit;
-        swerveAngleFXConfig.CurrentLimits.SupplyCurrentThreshold = drivePeakCurrentLimit;
-        swerveAngleFXConfig.CurrentLimits.SupplyTimeThreshold = drivePeakCurrentDuration;
+        swerveDriveFXConfig.CurrentLimits.SupplyCurrentLimit = driveContinuousCurrentLimit;
+        swerveDriveFXConfig.CurrentLimits.SupplyCurrentThreshold = drivePeakCurrentLimit;
+        swerveDriveFXConfig.CurrentLimits.SupplyTimeThreshold = drivePeakCurrentDuration;
         
 
         /* Swerve CANCoder Configuration */
         swerveCanCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-        swerveCanCoderConfig.MagnetSensor.SensorDirection = canCoderInvert ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
+        swerveCanCoderConfig.MagnetSensor.SensorDirection = canCoderInvert ? SensorDirectionValue.CounterClockwise_Positive : SensorDirectionValue.Clockwise_Positive;
         // swerveCanCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         // swerveCanCoderConfig.sensorDirection = canCoderInvert;
         // swerveCanCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;

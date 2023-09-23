@@ -20,9 +20,12 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenixpro.configs.CANcoderConfiguration;
 import com.ctre.phoenixpro.configs.CANcoderConfigurator;
 import com.ctre.phoenixpro.configs.MotorOutputConfigs;
+import com.ctre.phoenixpro.configs.Slot0Configs;
 import com.ctre.phoenixpro.configs.TalonFXConfigurator;
+import com.ctre.phoenixpro.controls.ControlRequest;
 import com.ctre.phoenixpro.controls.PositionVoltage;
 import com.ctre.phoenixpro.controls.VelocityVoltage;
+import com.ctre.phoenixpro.controls.VoltageOut;
 import com.ctre.phoenixpro.hardware.TalonFX;
 import com.ctre.phoenixpro.signals.InvertedValue;
 import com.ctre.phoenixpro.signals.NeutralModeValue;
@@ -50,10 +53,14 @@ public class SwerveModule {
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(driveKS, driveKV, driveKA); 
     private GenericEntry working;
+    private GenericEntry target;
+    private GenericEntry error;
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
-        working = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" cancoder position", 0.0).getEntry();
+        working = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" current", 0.0).getEntry();
+        target = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" target",0.0).getEntry();
+        error = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" error", 0).getEntry();
         this.angleOffset = moduleConstants.angleOffset;
         
         /* Angle Encoder Config */
@@ -83,6 +90,11 @@ public class SwerveModule {
         // configDriveMotor(moduleConstants.isInverted);
 
         lastAngle = getState().angle;
+
+        // VoltageOut mAngleVoltageOut = new VoltageOut(6);
+        // mAngleMotor.setControl(mAngleVoltageOut);
+        // 
+        resetToAbsolute();
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
@@ -107,17 +119,28 @@ public class SwerveModule {
 
     private void setAngle(SwerveModuleState desiredState){
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
-        
-        working.setDouble(angle.getDegrees());
+        // target.setDouble(angle.getDegrees());
+        // working.setDouble(getAngle().getDegrees());
+        mAngleMotor.getClosedLoopIntegratedOutput().refresh();
+        target.setDouble(angleOffset.getDegrees());
+        // error.setDouble(mAngleMotor.getClosedLoopError().getValue());
         // mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle.getDegrees(), angleGearRatio));
         mAngleMotor.setControl(mAnglePositionVoltage.withPosition((angle.getDegrees() / 360) * angleGearRatio));
+        //mAngleMotor.setVoltage(6);
         // mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRadians()));
         lastAngle = angle;
+    } 
+
+    private void setAngle(double angle)
+    {
+        mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle));
     }
 
     private Rotation2d getAngle(){
+        
         //working.setDouble((mAngleMotor.getPosition().getValue() / angleGearRatio) * 360);
         return Rotation2d.fromDegrees((mAngleMotor.getPosition().getValue() / angleGearRatio) * 360);
+        //return Rotation2d.fromDegrees(getCanCoder().getDegrees());
     }
 
     public Rotation2d getCanCoder(){
@@ -125,9 +148,14 @@ public class SwerveModule {
     }
 
     void resetToAbsolute(){
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset.getDegrees(), angleGearRatio);
-        // mAngleMotor.setSelectedSensorPosition(absolutePosition);
-        mAngleMotor.setRotorPosition(absolutePosition);
+        //double absolutePosition = ((getCanCoder().getDegrees() - angleOffset.getDegrees()) * angleGearRatio) / 360;
+        Rotation2d absolutePosition = getCanCoder().minus(angleOffset);
+
+        //setAngle(absolutePosition);
+        //mAngleMotor.setRotorPosition(0);
+        //angleEncoder.setPosition(absolutePosition);
+        //working.setDouble(absolutePosition);
+        mAngleMotor.setRotorPosition(absolutePosition.getRotations());
     }
 
     private void configAngleEncoder(){        
