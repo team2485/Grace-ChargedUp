@@ -125,7 +125,7 @@ public class SwerveModule {
 
         // target.setDouble(angle.getDegrees());
         // working.setDouble(getCanCoder().getRotations());
-        target.setDouble(mAngleMotor.getPosition().getValue() % 1);
+        target.setDouble(getCanCoder().getRotations());
         error.setDouble(angleOffset.getRotations());
         //working.setDouble(getAngle().getDegrees());
         //error.setDouble(getCanCoder().getDegrees());
@@ -158,7 +158,7 @@ public class SwerveModule {
 
         //setAngle(Rotation2d.fromRotations(mAngleMotor.getPosition().getValue() + Math.abs(mAngleMotor.getPosition().getValue() % 1) - angleOffset.getRotations()));
         double distanceToOffset = angleOffset.getRotations() - getCanCoder().getRotations();
-        setAngle(Rotation2d.fromRotations(getAngle().getRotations() + distanceToOffset));
+        setAngle(Rotation2d.fromRotations(mAngleMotor.getPosition().getValue() - distanceToOffset));
 
     }
 
