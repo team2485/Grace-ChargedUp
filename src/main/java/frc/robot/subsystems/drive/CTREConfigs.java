@@ -40,6 +40,8 @@ public final class CTREConfigs {
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentThreshold = anglePeakCurrentLimit;
         swerveAngleFXConfig.CurrentLimits.SupplyTimeThreshold = anglePeakCurrentDuration;
 
+        swerveAngleFXConfig.Feedback.SensorToMechanismRatio = angleGearRatio;
+
 
         /* Swerve Drive Motor Configuration */
         SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(

@@ -10,6 +10,7 @@ import frc.robot.subsystems.drive.CTREConfigs;
 import frc.util.Conversions;
 import frc.util.CTREModuleState;
 import frc.util.SwerveModuleConstants;
+import pabeles.concurrency.IntOperatorTask.Min;
 
 import static frc.robot.Constants.AutoConstants.*;
 import static frc.robot.Constants.Swerve.*;
@@ -55,6 +56,8 @@ public class SwerveModule {
     private GenericEntry working;
     private GenericEntry target;
     private GenericEntry error;
+
+    private double test = 0;
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
@@ -119,43 +122,44 @@ public class SwerveModule {
 
     private void setAngle(SwerveModuleState desiredState){
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+
         // target.setDouble(angle.getDegrees());
-        // working.setDouble(getAngle().getDegrees());
-        mAngleMotor.getClosedLoopIntegratedOutput().refresh();
-        target.setDouble(angleOffset.getDegrees());
-        // error.setDouble(mAngleMotor.getClosedLoopError().getValue());
-        // mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle.getDegrees(), angleGearRatio));
-        mAngleMotor.setControl(mAnglePositionVoltage.withPosition((angle.getDegrees() / 360) * angleGearRatio));
-        //mAngleMotor.setVoltage(6);
-        // mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRadians()));
+        // working.setDouble(getCanCoder().getRotations());
+        target.setDouble(mAngleMotor.getPosition().getValue() % 1);
+        error.setDouble(angleOffset.getRotations());
+        //working.setDouble(getAngle().getDegrees());
+        //error.setDouble(getCanCoder().getDegrees());
+        mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
         lastAngle = angle;
     } 
 
-    private void setAngle(double angle)
+    private void setAngle(Rotation2d angle)
     {
-        mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle));
+        mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
+        lastAngle = angle;
     }
 
     private Rotation2d getAngle(){
         
-        //working.setDouble((mAngleMotor.getPosition().getValue() / angleGearRatio) * 360);
-        return Rotation2d.fromDegrees((mAngleMotor.getPosition().getValue() / angleGearRatio) * 360);
-        //return Rotation2d.fromDegrees(getCanCoder().getDegrees());
+        return Rotation2d.fromDegrees(mAngleMotor.getPosition().getValue() * 360);
     }
 
     public Rotation2d getCanCoder(){
-        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValue());
+        return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }
 
     void resetToAbsolute(){
         //double absolutePosition = ((getCanCoder().getDegrees() - angleOffset.getDegrees()) * angleGearRatio) / 360;
-        Rotation2d absolutePosition = getCanCoder().minus(angleOffset);
+        // Rotation2d absolutePosition = angleOffset.minus(getCanCoder());
+        // test = absolutePosition.getDegrees();
 
-        //setAngle(absolutePosition);
-        //mAngleMotor.setRotorPosition(0);
-        //angleEncoder.setPosition(absolutePosition);
-        //working.setDouble(absolutePosition);
-        mAngleMotor.setRotorPosition(absolutePosition.getRotations());
+        // mAngleMotor.setRotorPosition((mAngleMotor.getRotorPosition().getValue() / angleGearRatio) - absolutePosition.getRotations());
+        // setAngle();
+
+        //setAngle(Rotation2d.fromRotations(mAngleMotor.getPosition().getValue() + Math.abs(mAngleMotor.getPosition().getValue() % 1) - angleOffset.getRotations()));
+        double distanceToOffset = angleOffset.getRotations() - getCanCoder().getRotations();
+        setAngle(Rotation2d.fromRotations(getAngle().getRotations() + distanceToOffset));
+
     }
 
     private void configAngleEncoder(){        
