@@ -10,12 +10,17 @@ import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.OIConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
+import java.time.Instant;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -96,6 +101,8 @@ public class RobotContainer {
   private SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 
   Timer m_autoTimer = new Timer();
+
+  private GenericEntry test = Shuffleboard.getTab("Swerve").add("output",0.0).getEntry();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
@@ -165,6 +172,7 @@ public class RobotContainer {
   }
 
   private void configureDrivetrainCommands() {
+
     m_drivetrain.setDefaultCommand(
         new DriveWithController(
             m_driver::getLeftY,

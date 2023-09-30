@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.subsystems.drive.CTREConfigs;
+import frc.util.CTREModuleState;
 import frc.util.Conversions;
 import frc.util.CTREModuleState;
 import frc.util.SwerveModuleConstants;
@@ -59,6 +60,8 @@ public class SwerveModule {
 
     private double test = 0;
 
+    private double absAngle = 0;
+
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
         working = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" current", 0.0).getEntry();
@@ -78,7 +81,7 @@ public class SwerveModule {
         mAngleConfigurator.apply(Robot.ctreConfigs.swerveAngleFXConfig);
         mAngleOutputConfigs.Inverted = angleMotorInvert ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive;
         mAngleOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-        //mAngleConfigurator.apply(mAngleOutputConfigs);
+        mAngleConfigurator.apply(mAngleOutputConfigs);
         
         //configAngleMotor();
 
@@ -102,6 +105,9 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
         /* This is a custom optimize function, since default WPILib optimize assumes continuous controller which CTRE and Rev onboard is not */
+        target.setDouble(desiredState.angle.getDegrees());
+        desiredState.angle = desiredState.angle.plus(Rotation2d.fromRotations(absAngle));
+        //desiredState.angle = Rotation2d.fromRotations(absAngle).minus(desiredState.angle);
         desiredState = CTREModuleState.optimize(desiredState, getState().angle); 
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
@@ -113,7 +119,10 @@ public class SwerveModule {
             mDriveMotor.set(percentOutput);
         }
         else {
-            double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, wheelCircumference, driveGearRatio);
+            // double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, wheelCircumference, driveGearRatio);
+            double velocity = ((desiredState.speedMetersPerSecond * 50 / wheelCircumference)) / driveGearRatio;
+            //target.setDouble(desiredState.speedMetersPerSecond);
+            mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
             // mDriveMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, feedforward.calculate(desiredState.speedMetersPerSecond));
             // mDriveMotor.setControl(mDriveVelocityVoltage.withFeedForward(feedforward.calculate(desiredState.speedMetersPerSecond)).withVelocity(velocity));
             // mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
@@ -123,19 +132,22 @@ public class SwerveModule {
     private void setAngle(SwerveModuleState desiredState){
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
 
-        // target.setDouble(angle.getDegrees());
         // working.setDouble(getCanCoder().getRotations());
-        target.setDouble(getCanCoder().getRotations());
-        error.setDouble(angleOffset.getRotations());
+        //target.setDouble(getCanCoder().getRotations());
+        //error.setDouble(angleOffset.getRotations());
         //working.setDouble(getAngle().getDegrees());
         //error.setDouble(getCanCoder().getDegrees());
+        //mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
+        //mAngleMotor.setControl(mAnglePositionVoltage.withPosition(absAngle + angle.getRotations() % 1));
         mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
+        //lastAngle = Rotation2d.fromRotations(absAngle).plus(angle);
         lastAngle = angle;
     } 
 
     private void setAngle(Rotation2d angle)
     {
         mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
+        //lastAngle = Rotation2d.fromRotations(absAngle);
         lastAngle = angle;
     }
 
@@ -149,7 +161,8 @@ public class SwerveModule {
     }
 
     void resetToAbsolute(){
-        //double absolutePosition = ((getCanCoder().getDegrees() - angleOffset.getDegrees()) * angleGearRatio) / 360;
+        double absolutePosition = Math.abs(((getCanCoder().getDegrees() - angleOffset.getDegrees())) / 360);
+        //target.setDouble(absolutePosition);
         // Rotation2d absolutePosition = angleOffset.minus(getCanCoder());
         // test = absolutePosition.getDegrees();
 
@@ -157,9 +170,11 @@ public class SwerveModule {
         // setAngle();
 
         //setAngle(Rotation2d.fromRotations(mAngleMotor.getPosition().getValue() + Math.abs(mAngleMotor.getPosition().getValue() % 1) - angleOffset.getRotations()));
-        double distanceToOffset = angleOffset.getRotations() - getCanCoder().getRotations();
-        setAngle(Rotation2d.fromRotations(mAngleMotor.getPosition().getValue() - distanceToOffset));
-
+        //double distanceToOffset = getCanCoder().getRotations() - absolutePosition;
+        double distanceToOffset = getCanCoder().getRotations() - angleOffset.getRotations();
+        //setAngle(Rotation2d.fromRotations(mAngleMotor.getPosition().getValue() + absolutePosition));
+        absAngle = getAngle().getRotations() - distanceToOffset;
+        setAngle(Rotation2d.fromRotations(getAngle().getRotations() - distanceToOffset));
     }
 
     private void configAngleEncoder(){        

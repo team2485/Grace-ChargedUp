@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -22,7 +24,10 @@ public class Drivetrain extends SubsystemBase {
 
     double yaw = gyro.getYaw();
 
+    GenericEntry target;
+
     public Drivetrain() {
+        target = Shuffleboard.getTab("Swerve").add("rotation",0.0).getEntry();
         gyro.configFactoryDefault();
         this.zeroGyro();
 
@@ -44,7 +49,7 @@ public class Drivetrain extends SubsystemBase {
                                     translation.getX(), 
                                     translation.getY(), 
                                     rotation, 
-                                    getYaw()
+                                    Rotation2d.fromDegrees(gyro.getYaw() * -1)
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
@@ -52,8 +57,10 @@ public class Drivetrain extends SubsystemBase {
                                     rotation)
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+        
+        target.setDouble(translation.getX());
 
-        for(SwerveModule mod : mSwerveMods){
+        for(SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
     }    

@@ -12,9 +12,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.Drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class DriveWithController extends CommandBase {
   private final DoubleSupplier m_xSpeedSupplier;
@@ -23,6 +25,7 @@ public class DriveWithController extends CommandBase {
   private final BooleanSupplier m_fieldRelative;
 
   private final Drivetrain m_drivetrain;
+
 
   public DriveWithController(
       DoubleSupplier xSpeedSupplier,
@@ -58,10 +61,10 @@ public class DriveWithController extends CommandBase {
         map(-MathUtil.applyDeadband(Math.abs(m_ySpeedSupplier.getAsDouble()), kDriverLeftXDeadband)
           * kTeleopMaxSpeedMetersPerSecond, kDriverLeftXDeadband, 1, 0, 1) * ySign;
 
+
     final int rotSign = (int)(Math.abs(m_rotSpeedSupplier.getAsDouble())/m_rotSpeedSupplier.getAsDouble());
-    final double rot =
-        map(-MathUtil.applyDeadband(m_rotSpeedSupplier.getAsDouble(), kDriverRightXDeadband)
-            * kTeleopMaxAngularSpeedRadiansPerSecond, kDriverRightXDeadband, 1, 0, 1) * rotSign;
+    final double rot = Math.abs(map(-MathUtil.applyDeadband(m_rotSpeedSupplier.getAsDouble(), kDriverRightXDeadband)
+            * kTeleopMaxAngularSpeedRadiansPerSecond, kDriverRightXDeadband, 1, 0, 1)) * rotSign;
 
     final boolean fieldRelative = m_fieldRelative.getAsBoolean();
     m_drivetrain.drive(new Translation2d(xSpeed, ySpeed), rot, fieldRelative, false);
