@@ -58,7 +58,7 @@ public class Drivetrain extends SubsystemBase {
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
         
-        target.setDouble(translation.getX());
+        //target.setDouble(translation.getX());
 
         for(SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);

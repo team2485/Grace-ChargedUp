@@ -120,16 +120,20 @@ public class SwerveModule {
         }
         else {
             // double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, wheelCircumference, driveGearRatio);
-            double velocity = ((desiredState.speedMetersPerSecond * 50 / wheelCircumference)) / driveGearRatio;
+            double velocity = ((desiredState.speedMetersPerSecond * 80 / wheelCircumference)) / driveGearRatio;
             //target.setDouble(desiredState.speedMetersPerSecond);
+
+            target.setDouble(velocity);
+
             mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
+
             // mDriveMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, feedforward.calculate(desiredState.speedMetersPerSecond));
             // mDriveMotor.setControl(mDriveVelocityVoltage.withFeedForward(feedforward.calculate(desiredState.speedMetersPerSecond)).withVelocity(velocity));
             // mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
         }
     }
 
-    private void setAngle(SwerveModuleState desiredState){
+    private void setAngle(SwerveModuleState desiredState) {
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
 
         // working.setDouble(getCanCoder().getRotations());
@@ -139,7 +143,9 @@ public class SwerveModule {
         //error.setDouble(getCanCoder().getDegrees());
         //mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
         //mAngleMotor.setControl(mAnglePositionVoltage.withPosition(absAngle + angle.getRotations() % 1));
+
         mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
+
         //lastAngle = Rotation2d.fromRotations(absAngle).plus(angle);
         lastAngle = angle;
     } 
@@ -147,7 +153,7 @@ public class SwerveModule {
     private void setAngle(Rotation2d angle)
     {
         mAngleMotor.setControl(mAnglePositionVoltage.withPosition(angle.getRotations()));
-        //lastAngle = Rotation2d.fromRotations(absAngle);
+        lastAngle = Rotation2d.fromRotations(absAngle);
         lastAngle = angle;
     }
 

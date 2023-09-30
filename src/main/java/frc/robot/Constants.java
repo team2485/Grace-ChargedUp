@@ -76,8 +76,8 @@ public final class Constants {
     public static final int kOperatorPort = 1;
 
     public static final double kDriverRightXDeadband = 0.1;
-    public static final double kDriverLeftXDeadband = 0.15;
-    public static final double kDriverLeftYDeadband = 0.15;
+    public static final double kDriverLeftXDeadband = 0.2;
+    public static final double kDriverLeftYDeadband = 0.2;
 
     public static final double kTriggerThreshold = 0.1;
   }
@@ -849,7 +849,7 @@ public final class Constants {
       public static final int driveMotorID = 3;
       public static final int angleMotorID = 4;
       public static final int canCoderID = 12;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(167.8);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(167.8 - 130);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, true);
     }
@@ -869,7 +869,7 @@ public final class Constants {
       public static final int driveMotorID = 5;
       public static final int angleMotorID = 6;
       public static final int canCoderID = 13;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(331);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(331 + 5);
       //public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, true);
@@ -880,7 +880,7 @@ public final class Constants {
       public static final int driveMotorID = 7;
       public static final int angleMotorID = 8;
       public static final int canCoderID = 14;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(34.6);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(34.6 + 10);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, false);
     }

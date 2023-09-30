@@ -54,17 +54,17 @@ public class DriveWithController extends CommandBase {
     final int xSign = (int)(Math.abs(m_xSpeedSupplier.getAsDouble())/m_xSpeedSupplier.getAsDouble());
     final double xSpeed =
         map(-MathUtil.applyDeadband(Math.abs(m_xSpeedSupplier.getAsDouble()), kDriverLeftYDeadband)
-            * kTeleopMaxSpeedMetersPerSecond, kDriverLeftYDeadband, 1, 0, 1) * xSign;
+            * kTeleopMaxSpeedMetersPerSecond, 0, 1, 0, 1) * -xSign;
 
     final int ySign = (int)(Math.abs(m_ySpeedSupplier.getAsDouble())/m_ySpeedSupplier.getAsDouble());
     final double ySpeed =
         map(-MathUtil.applyDeadband(Math.abs(m_ySpeedSupplier.getAsDouble()), kDriverLeftXDeadband)
-          * kTeleopMaxSpeedMetersPerSecond, kDriverLeftXDeadband, 1, 0, 1) * ySign;
+          * kTeleopMaxSpeedMetersPerSecond, 0, 1, 0, 1) * ySign;
 
 
     final int rotSign = (int)(Math.abs(m_rotSpeedSupplier.getAsDouble())/m_rotSpeedSupplier.getAsDouble());
     final double rot = Math.abs(map(-MathUtil.applyDeadband(m_rotSpeedSupplier.getAsDouble(), kDriverRightXDeadband)
-            * kTeleopMaxAngularSpeedRadiansPerSecond, kDriverRightXDeadband, 1, 0, 1)) * rotSign;
+            * kTeleopMaxAngularSpeedRadiansPerSecond, 0, 1, 0, 1)) * rotSign;
 
     final boolean fieldRelative = m_fieldRelative.getAsBoolean();
     m_drivetrain.drive(new Translation2d(xSpeed, ySpeed), rot, fieldRelative, false);
