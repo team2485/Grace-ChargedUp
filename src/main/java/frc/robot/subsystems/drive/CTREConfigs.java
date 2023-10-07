@@ -62,6 +62,7 @@ public final class CTREConfigs {
         swerveDriveFXConfig.CurrentLimits.SupplyCurrentThreshold = drivePeakCurrentLimit;
         swerveDriveFXConfig.CurrentLimits.SupplyTimeThreshold = drivePeakCurrentDuration;
         
+        swerveDriveFXConfig.Feedback.SensorToMechanismRatio = driveGearRatio;
 
         /* Swerve CANCoder Configuration */
         swerveCanCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;

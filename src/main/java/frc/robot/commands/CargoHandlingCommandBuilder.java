@@ -97,9 +97,10 @@ public class CargoHandlingCommandBuilder {
         .alongWith(new InstantCommand(() -> indexer.setVelocityRotationsPerSecond(0)));
   }
 
-  public static Command outtakeCommand(Intake intake, IntakeArm intakeArm) {
+  public static Command outtakeCommand(Intake intake, IntakeArm intakeArm, Indexer indexer, double velocity) {
     return getArmDownCommand(intakeArm)
-        .andThen(new RunCommand(() -> intake.setVelocityRotationsPerSecond(-6)));
+        .andThen(new RunCommand(() -> intake.setVelocityRotationsPerSecond(velocity)))
+        .alongWith(new RunCommand(()-> indexer.setVelocityRotationsPerSecond(velocity)));
   }
 
   public static Command stopTestCommand(Intake intake, IntakeArm intakeArm, Indexer indexer) {
@@ -204,8 +205,16 @@ public class CargoHandlingCommandBuilder {
     }
   }
 
-  public static Command getSetShooterCommand(Shooter shooter) {
-    return new StartEndCommand(() -> shooter.setVelocities(), () -> shooter.zeroShooter(), shooter);
+  public static Command setHoodCommand(DoubleSupplier angleRadians, Hood hood) {
+    return new InstantCommand(() -> hood.setAngleRadians(angleRadians.getAsDouble()));
+  }
+
+  public static Command getSetShooterCommandMid(Shooter shooter) {
+    return new StartEndCommand(() -> shooter.setVelocitiesMid(), () -> shooter.zeroShooter(), shooter);
+  }
+
+  public static Command getSetShooterCommandHigh(Shooter shooter) {
+    return new StartEndCommand(() -> shooter.setVelocitiesHigh(), () -> shooter.zeroShooter(), shooter);
   }
 
   public static Command getSetIntakeCommand(DoubleSupplier velocity, Intake intake) {

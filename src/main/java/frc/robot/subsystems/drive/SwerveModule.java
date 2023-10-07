@@ -120,10 +120,15 @@ public class SwerveModule {
         }
         else {
             // double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, wheelCircumference, driveGearRatio);
-            double velocity = ((desiredState.speedMetersPerSecond * 80 / wheelCircumference)) / driveGearRatio;
+            double velocity = ((desiredState.speedMetersPerSecond / wheelCircumference));
             //target.setDouble(desiredState.speedMetersPerSecond);
 
+            // double sign = Math.abs(velocity) / velocity;
+
+            // velocity = Math.min(Math.abs(velocity), 50) * sign;
+
             target.setDouble(velocity);
+            error.setDouble(mDriveMotor.getVelocity().getValue());
 
             mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
 

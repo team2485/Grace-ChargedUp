@@ -75,7 +75,7 @@ public final class Constants {
     public static final int kDriverPort = 0;
     public static final int kOperatorPort = 1;
 
-    public static final double kDriverRightXDeadband = 0.1;
+    public static final double kDriverRightXDeadband = 0.2;
     public static final double kDriverLeftXDeadband = 0.2;
     public static final double kDriverLeftYDeadband = 0.2;
 
@@ -823,7 +823,7 @@ public final class Constants {
     public static final double angleKF = 0;
 
     /* Drive Motor PID Values */
-    public static final double driveKP = .1;
+    public static final double driveKP = 2.5;
     public static final double driveKI = 0;
     public static final double driveKD = 0.0;
     public static final double driveKF = 0.0;
@@ -849,7 +849,7 @@ public final class Constants {
       public static final int driveMotorID = 3;
       public static final int angleMotorID = 4;
       public static final int canCoderID = 12;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(167.8 - 130);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(167.8);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, true);
     }

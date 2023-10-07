@@ -234,8 +234,8 @@ public class RobotContainer {
     // m_operator.leftPOV().whileActiveOnce(new InstantCommand(() -> flywheelSpeed--));
     // m_operator.rightPOV().whileActiveOnce(new InstantCommand(() -> flywheelSpeed++));
 
-    m_operator.y().whileTrue(CargoHandlingCommandBuilder.setShooterForShot(m_hood, m_shooter));
-
+    // m_operator.y().whileTrue(CargoHandlingCommandBuilder.setShooterForShot(m_hood, m_shooter));
+       m_operator.y().onTrue(new InstantCommand(()-> m_hood.setAngleRadians(.3)));
     //  m_operator.y().whenActive(new InstantCommand(()->m_hood.setAngleRadians(0.16)));
 
     m_operator
@@ -252,15 +252,32 @@ public class RobotContainer {
     m_driver
         .b()
         // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
-        .whileTrue(CargoHandlingCommandBuilder.outtakeCommand(m_intake, m_intakeArm))
+        .whileTrue(CargoHandlingCommandBuilder.outtakeCommand(m_intake, m_intakeArm, m_indexer, -2))
+        .onFalse(
+            CargoHandlingCommandBuilder.stopTestCommand(m_intake, m_intakeArm, m_indexer));
+
+    m_driver
+        .y()
+        // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
+        .whileTrue(CargoHandlingCommandBuilder.outtakeCommand(m_intake, m_intakeArm, m_indexer, -10))
         .onFalse(
             CargoHandlingCommandBuilder.stopTestCommand(m_intake, m_intakeArm, m_indexer));
 
     m_operator
-        .leftTrigger()
+        .lowerPOV()
         // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
         .whileTrue(
-            CargoHandlingCommandBuilder.getSetShooterCommand(m_shooter)
+            CargoHandlingCommandBuilder.getSetShooterCommandMid(m_shooter)
+                .alongWith(
+                    new ConditionalCommand(
+                        new InstantCommand(() -> m_operator.setRumble(RumbleType.kLeftRumble, 0.5)),
+                        new InstantCommand(()->m_operator.setRumble(RumbleType.kLeftRumble, 0)),
+                        () -> m_shooter.shooterWithinTolerance())));
+    m_operator
+        .upperPOV()
+        // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
+        .whileTrue(
+            CargoHandlingCommandBuilder.getSetShooterCommandHigh(m_shooter)
                 .alongWith(
                     new ConditionalCommand(
                         new InstantCommand(() -> m_operator.setRumble(RumbleType.kLeftRumble, 0.5)),
@@ -312,24 +329,24 @@ public class RobotContainer {
     //     .whenInactive(
     //         CargoHandlingCommandBuilder.getStopFeedCommand(m_indexer, m_feeder, m_feedServo));
 
-    m_operator
-        .upperPOV()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  m_shooterOffset += 0.3;
-                  m_kickerRatioOffset += 0.1;
-                }));
+    // m_operator
+    //     .upperPOV()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               m_shooterOffset += 0.3;
+    //               m_kickerRatioOffset += 0.1;
+    //             }));
 
     // Make robot think it's further when aiming
-    m_operator
-        .lowerPOV()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  m_shooterOffset -= 0.3;
-                  m_kickerRatioOffset -= 0.1;
-                }));
+    // m_operator
+    //     .lowerPOV()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               m_shooterOffset -= 0.3;
+    //               m_kickerRatioOffset -= 0.1;
+    //             }));
 
     m_operator
         .a()

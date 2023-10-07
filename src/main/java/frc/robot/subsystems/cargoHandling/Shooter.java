@@ -216,8 +216,19 @@ public class Shooter extends SubsystemBase {
    *     <1 creates backspin
    */
  
-  public void setVelocities() {
-    setShooter(10);
+  public void setVelocitiesMid() {
+    setShooter(36
+    );
+    // this.setShooterVelocityRotationsPerSecond();
+    // this.setKickerVelocityRotationsPerSecond(
+    //     shooterVelocityRotationsPerSecond
+    //         * kShooterCircumferenceMeters // desired shooter tangential velocity m/s
+    //         * tangentialVelocityRatio // desired kicker tangential velocity m/s
+    //         / kKickerCircumferenceMeters); // desired kicker angular velocity rots/sec
+  }
+
+  public void setVelocitiesHigh() {
+    setShooter(43.5);
     // this.setShooterVelocityRotationsPerSecond();
     // this.setKickerVelocityRotationsPerSecond(
     //     shooterVelocityRotationsPerSecond
@@ -299,8 +310,8 @@ public class Shooter extends SubsystemBase {
     //     DemandType.ArbitraryFeedForward,
     //     newVelocitySetpointRotationsPerSecond > 0 ? kSShooterVolts / kNominalVoltage : 0);
 
-    m_shooterTalon.setControl(shooterVelocityVoltage.withVelocity(15));
-    m_shooterTalon2.setControl(shooterVelocityVoltage2.withVelocity(15));
+    m_shooterTalon.setControl(shooterVelocityVoltage.withVelocity(velocity));
+    m_shooterTalon2.setControl(shooterVelocityVoltage2.withVelocity(velocity));
 
     // m_shooterTalon.set(.2);
     // m_shooterTalon2.set(.2);
