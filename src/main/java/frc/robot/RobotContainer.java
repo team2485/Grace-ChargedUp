@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.PerpetualCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
+import frc.robot.subsystems.PoseEstimation;
+import frc.robot.subsystems.Vision;
 // import frc.robot.subsystems.*;
 import frc.robot.subsystems.cargoHandling.*;
 // import frc.robot.subsystems.climb.*;
@@ -54,10 +56,16 @@ public class RobotContainer {
 
   public final Hood m_hood = new Hood();
 
+  // public final PoseEstimation m_poseEstimator = new PoseEstimation(m_drivetrain::getYaw,
+  // m_drivetrain::getModulePositions);
+
 //   public final ClimbElevator m_climbElevator = new ClimbElevator();
 //   public final ClimbArm m_climbArm = new ClimbArm();
 //   public final ClimbStateMachine m_climbStateMachine = new ClimbStateMachine();
   public WPI_TalonFX m_talon = new WPI_TalonFX(40);
+  public final Vision m_vision = new Vision();
+
+  public DriveToTag m_driveToTag = new DriveToTag(m_drivetrain, m_vision);
 
   // SHOOTER SETPOINT FIELDS
   // Distance offset to change distance by for auto-aim -- used to adjust
@@ -191,6 +199,7 @@ public class RobotContainer {
     //             m_drivetrain));
 
     m_driver.x().whileTrue(new InstantCommand(m_drivetrain::zeroGyro));
+    m_driver.upperPOV().whileTrue(m_driveToTag);
   }
 
   private void configureCargoHandlingCommands() {

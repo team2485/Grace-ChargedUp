@@ -56,7 +56,6 @@ public class SwerveModule {
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(driveKS, driveKV, driveKA); 
     private GenericEntry working;
     private GenericEntry target;
-    private GenericEntry error;
 
     private double test = 0;
 
@@ -66,7 +65,6 @@ public class SwerveModule {
         this.moduleNumber = moduleNumber;
         working = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" current", 0.0).getEntry();
         target = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" target",0.0).getEntry();
-        error = Shuffleboard.getTab("Swerve").add(String.valueOf(moduleNumber)+" error", 0).getEntry();
         this.angleOffset = moduleConstants.angleOffset;
         
         /* Angle Encoder Config */
@@ -128,7 +126,6 @@ public class SwerveModule {
             // velocity = Math.min(Math.abs(velocity), 50) * sign;
 
             target.setDouble(velocity);
-            error.setDouble(mDriveMotor.getVelocity().getValue());
 
             mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
 
@@ -139,7 +136,7 @@ public class SwerveModule {
     }
 
     private void setAngle(SwerveModuleState desiredState) {
-        Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+        Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.06)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
 
         // working.setDouble(getCanCoder().getRotations());
         //target.setDouble(getCanCoder().getRotations());
@@ -219,7 +216,7 @@ public class SwerveModule {
 
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(
-            Conversions.falconToMeters(mDriveMotor.getPosition().getValue(), wheelCircumference, driveGearRatio), 
+            mDriveMotor.getPosition().getValue() * wheelCircumference, 
             getAngle()
         );
     }

@@ -11,8 +11,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C;
@@ -264,50 +267,62 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String kCameraName = "gloworm";
+    public static final String kCameraName = "photonvision";
 
-    public static final double kVisionNominalFramerate = 45;
+    // old constraints (might want to use again)
 
-    public static final double kLensHeightMeters = 0.56896;
-    public static final double kLensPitchRadians = Units.degreesToRadians(30);
-    public static final Rotation2d kCameraPitch = new Rotation2d(kLensPitchRadians);
+    public static final TrapezoidProfile.Constraints kXConstraints = new TrapezoidProfile.Constraints(1, 2);
+    public static final TrapezoidProfile.Constraints kYConstraints = new TrapezoidProfile.Constraints(.5, 2);
+    public static final TrapezoidProfile.Constraints kOmegaConstraints = new TrapezoidProfile.Constraints(3, 8);
 
-    // width of camera FOV (angle)
-    public static final Rotation2d kCameraFOVW = Rotation2d.fromDegrees(59.6);
+    public static final double kTranslationTolerance = 0.02;
+    public static final double kThetaTolerance = Units.degreesToRadians(0);
 
-    // height of camera FOV (angle)
-    public static final Rotation2d kCameraFOVH = Rotation2d.fromDegrees(49.7);
+    // TODO: tune!
+    public static final TrapezoidProfile.Constraints kDefaultXYContraints = new TrapezoidProfile.Constraints(
+        Swerve.maxSpeed * 0.3,
+        Swerve.maxAngularVelocity);
 
-    // How much do the height and width of the camera vieport change for every meter out from the
-    // camera?
-    public static final double kCameraViewportRatioW = 2 * kCameraFOVW.times(0.5).getTan();
-    public static final double kCameraViewportRatioH = 2 * kCameraFOVH.times(0.5).getTan();
+    public static final TrapezoidProfile.Constraints kDefaultOmegaConstraints = new TrapezoidProfile.Constraints(
+        Swerve.maxAngularVelocity * 0.2,
+        Swerve.maxAngularVelocity);
 
-    public static final int kCameraPixelsX = 960;
-    public static final int kCameraPixelsY = 720;
+    // TODO: tune!
+    public static final double X_kP = 1.25;
+    public static final double X_kI = 0.3;
+    public static final double X_kD = 0.0;
 
-    public static final int kMinTargetCount = 2;
-    public static final double kCircleFitPrecision = 0.01;
+    public static final double Y_kP = 1.25;
+    public static final double Y_kI = 0.3;
+    public static final double Y_kD = 0.0;  
 
-    public static final double kExtraLatencySecs = 0;
+    public static final double THETA_kP = 1.5;
+    public static final double THETA_kI = 0.5;
+    public static final double THETA_kD = 0.15;
 
-    // idle behavior
-    public static final double kTargetGraceSecs =
-        0.5; // how long after target loss to wait for reaquire before turning to blink mode
-    public static final double kBlinkPeriodSecs = 3.0;
-    public static final double kBlinkLengthSecs = 0.5;
+    // TODO: ensure validity of measurements
+    public static final Transform3d kRobotToCamera = new Transform3d(new Translation3d(-.33, 0, .2667),
+        new Rotation3d());
 
-    public static final Transform2d kRobotToCameraMeters =
-        new Transform2d(
-            new Translation2d(0.321818, 0), // in meters
-            new Rotation2d());
+    public static final double kFieldLengthMeters = 16.54175;
+    public static final double kFieldWidthMeters = 8.0137;
 
-    // Vision pose estimation constants
-    public static final double kVisionWeightPerSec =
-        0.85; // After one second, what % of pose average should be vision (4% in weighted avg)
+    public static final Pose2d kFlippingPose = new Pose2d(
+        new Translation2d(kFieldLengthMeters, kFieldWidthMeters),
+        new Rotation2d(Math.PI));
 
-    public static final double kVisionMaxAngularVelocityRadians =
-        Units.degreesToRadians(8.0); // Max angular velocity before vision data is rejected
+    // public static final int kTagOfInterest = 1;
+    // public static final Transform2d kTagToGoal = new Transform2d(new
+    // Translation2d(1, 0),
+    // Rotation2d.fromDegrees(180.0));
+
+
+    public static final double kOffsetToNextScoringStation = 0.61;
+
+    public static final double kTopTagYPos = kFieldWidthMeters - 4.42;
+    public static final double kMiddleTagYPos = kFieldWidthMeters - 2.75;
+    public static final double kBottomTagYPos = kFieldWidthMeters - 1.07;
+
   }
 
   public static final class IntakeConstants {
