@@ -118,7 +118,7 @@ public class SwerveModule {
         }
         else {
             // double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, wheelCircumference, driveGearRatio);
-            double velocity = ((desiredState.speedMetersPerSecond / wheelCircumference));
+            double velocity = (((desiredState.speedMetersPerSecond) / wheelCircumference));
             //target.setDouble(desiredState.speedMetersPerSecond);
 
             // double sign = Math.abs(velocity) / velocity;
@@ -126,8 +126,8 @@ public class SwerveModule {
             // velocity = Math.min(Math.abs(velocity), 50) * sign;
 
             target.setDouble(velocity);
-
-            mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
+            if (velocity == 0) mDriveMotor.setVoltage(0);
+            else mDriveMotor.setControl(mDriveVelocityVoltage.withVelocity(velocity));
 
             // mDriveMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, feedforward.calculate(desiredState.speedMetersPerSecond));
             // mDriveMotor.setControl(mDriveVelocityVoltage.withFeedForward(feedforward.calculate(desiredState.speedMetersPerSecond)).withVelocity(velocity));
@@ -136,7 +136,7 @@ public class SwerveModule {
     }
 
     private void setAngle(SwerveModuleState desiredState) {
-        Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.06)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+        Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
 
         // working.setDouble(getCanCoder().getRotations());
         //target.setDouble(getCanCoder().getRotations());

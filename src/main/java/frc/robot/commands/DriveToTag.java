@@ -20,7 +20,7 @@ public class DriveToTag extends CommandBase {
 
   PIDController xController = new PIDController(2, 0, 0);
   PIDController yController = new PIDController(-2, .05, 0);
-  PIDController rotController = new PIDController(1, 0, 0);
+  PIDController rotController = new PIDController(-20, 1, 0);
   double desiredX = 0;
   double desiredY = 0;
   double desiredRot = 0;
@@ -51,7 +51,7 @@ public class DriveToTag extends CommandBase {
       desiredRot = rotController.calculate(m_drivetrain.getYaw().getRotations());
       m_drivetrain.drive(new Translation2d(desiredX, 
                                            desiredY), 
-                                           0, true, false);
+                                           desiredRot, true, false);
     }
   }
 

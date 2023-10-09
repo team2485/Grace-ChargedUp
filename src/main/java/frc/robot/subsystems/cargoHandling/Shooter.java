@@ -217,8 +217,7 @@ public class Shooter extends SubsystemBase {
    */
  
   public void setVelocitiesMid() {
-    setShooter(36
-    );
+    setShooter(36);
     // this.setShooterVelocityRotationsPerSecond();
     // this.setKickerVelocityRotationsPerSecond(
     //     shooterVelocityRotationsPerSecond
@@ -229,6 +228,7 @@ public class Shooter extends SubsystemBase {
 
   public void setVelocitiesHigh() {
     setShooter(43.5);
+    //setShooter(80);
     // this.setShooterVelocityRotationsPerSecond();
     // this.setKickerVelocityRotationsPerSecond(
     //     shooterVelocityRotationsPerSecond
@@ -289,8 +289,8 @@ public class Shooter extends SubsystemBase {
     //     DemandType.ArbitraryFeedForward,
     //     newVelocitySetpointRotationsPerSecond > 0 ? kSShooterVolts / kNominalVoltage : 0);
 
-    m_shooterTalon.setControl(shooterVelocityVoltage.withVelocity(0));
-    m_shooterTalon2.setControl(shooterVelocityVoltage2.withVelocity(0));
+    m_shooterTalon.setVoltage(0);
+    m_shooterTalon2.setVoltage(0);
     // m_shooterTalon.setVoltage(0);
     // m_shooterTalon.setVoltage(0);
     // m_shooterTalon.set(0);
