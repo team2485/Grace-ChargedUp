@@ -19,7 +19,7 @@ public class DriveToTag extends CommandBase {
   Vision m_vision;
 
   PIDController xController = new PIDController(2, 0, 0);
-  PIDController yController = new PIDController(-2, .05, 0);
+  PIDController yController = new PIDController(-1.75, .05, 0);
   PIDController rotController = new PIDController(-20, 1, 0);
   double desiredX = 0;
   double desiredY = 0;
@@ -44,11 +44,11 @@ public class DriveToTag extends CommandBase {
     if (tagPose != null && currentPose != null) {
       xController.setSetpoint(tagPose.getX());
       yController.setSetpoint(tagPose.getY());
-      rotController.setSetpoint(0);
+      rotController.setSetpoint(tagPose.getRotation().getZ() / (2*Math.PI));
 
       desiredX = xController.calculate(currentPose.getX());
       desiredY = yController.calculate(currentPose.getY());
-      desiredRot = rotController.calculate(m_drivetrain.getYaw().getRotations());
+      desiredRot = rotController.calculate(m_drivetrain.getYaw().getRotations() + .5);
       m_drivetrain.drive(new Translation2d(desiredX, 
                                            desiredY), 
                                            desiredRot, true, false);

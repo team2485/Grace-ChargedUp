@@ -326,8 +326,8 @@ public class Shooter extends SubsystemBase {
   public void setShooterVoltage(double voltage) {
     // m_shooterTalon.set(ControlMode.PercentOutput, voltage / kNominalVoltage);
     // m_shooterTalon2.set(ControlMode.PercentOutput, voltage / kNominalVoltage);
-    // m_shooterTalon.setVoltage(voltage);
-    // m_shooterTalon2.setVoltage(voltage);
+    m_shooterTalon.setVoltage(voltage);
+    m_shooterTalon2.setVoltage(voltage);
   }
 
  

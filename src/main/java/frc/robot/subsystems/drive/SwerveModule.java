@@ -103,7 +103,6 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
         /* This is a custom optimize function, since default WPILib optimize assumes continuous controller which CTRE and Rev onboard is not */
-        target.setDouble(desiredState.angle.getDegrees());
         desiredState.angle = desiredState.angle.plus(Rotation2d.fromRotations(absAngle));
         //desiredState.angle = Rotation2d.fromRotations(absAngle).minus(desiredState.angle);
         desiredState = CTREModuleState.optimize(desiredState, getState().angle); 
@@ -137,6 +136,8 @@ public class SwerveModule {
 
     private void setAngle(SwerveModuleState desiredState) {
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+
+        target.setDouble(getCanCoder().getDegrees());
 
         // working.setDouble(getCanCoder().getRotations());
         //target.setDouble(getCanCoder().getRotations());

@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.PerpetualCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
+import frc.robot.commands.auto.AutoCommandBuilder;
 import frc.robot.subsystems.PoseEstimation;
 import frc.robot.subsystems.Vision;
 // import frc.robot.subsystems.*;
@@ -109,62 +110,46 @@ public class RobotContainer {
   private SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 
   Timer m_autoTimer = new Timer();
-
-  private GenericEntry test = Shuffleboard.getTab("Swerve").add("output",0.0).getEntry();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
     // m_climbElevator.setPositionMeters(0);
 
-    // m_autoChooser.setDefaultOption(
-    //     "4 Ball Right Side",
-    //     AutoCommandBuilder.get4BallAuto(
-    //         m_drivetrain,
-    //         m_intake,
-    //         m_intakeArm,
-    //         m_indexer,
-    //         m_feeder,
-    //         m_feedServo,
-    //         m_shooter,
-    //         m_hood));
-    // m_autoChooser.addOption(
-    //     "3 Ball Left Side",
-    //     AutoCommandBuilder.get3BallAutoLeft(
-    //         m_drivetrain,
-    //         m_intake,
-    //         m_intakeArm,
-    //         m_indexer,
-    //         m_feeder,
-    //         m_feedServo,
-    //         m_shooter,
-    //         m_hood));
+    m_autoChooser.setDefaultOption(
+        "1 Cube High",
+        AutoCommandBuilder.get1CubeHighAuto(
+            m_drivetrain,
+            m_intake,
+            m_intakeArm,
+            m_indexer,
+            m_feeder,
+            m_feedServo,
+            m_shooter,
+            m_hood));
+    m_autoChooser.addOption(
+        "1 Cube Low",
+        AutoCommandBuilder.get1CubeMidAuto(
+            m_drivetrain,
+            m_intake,
+            m_intakeArm,
+            m_indexer,
+            m_feeder,
+            m_feedServo,
+            m_shooter,
+            m_hood));
+    m_autoChooser.addOption(
+        "2 Cube",
+        AutoCommandBuilder.get2CubeAuto(
+            m_drivetrain,
+            m_intake,
+            m_intakeArm,
+            m_indexer,
+            m_feeder,
+            m_feedServo,
+            m_shooter,
+            m_hood));
 
-    // m_autoChooser.addOption(
-    //     "5 Ball (flex)",
-    //     AutoCommandBuilder.get5BallAuto(
-    //         m_drivetrain,
-    //         m_intake,
-    //         m_intakeArm,
-    //         m_indexer,
-    //         m_feeder,
-    //         m_feedServo,
-    //         m_shooter,
-    //         m_hood));
-
-    // m_autoChooser.addOption(
-    //     "Back up",
-    //     // PathCommandBuilder.getResetOdometryCommand(m_drivetrain,
-    //     // PathCommandBuilder.getPathCommand(m_drivetrain, "2 Ball Left Side")).andThen(
-    //     // CargoHandlingCommandBuilder.getSetShooterCommand(
-    //     //         () -> 35, () -> 0.8, m_shooter) // full send
-    //     //     .raceWith(
-    //     //         new WaitCommand(3)
-    //     //             .andThen(
-    //     //                 CargoHandlingCommandBuilder.getIndexToShooterCommand(
-    //     //                     m_indexer, m_feeder, m_feedServo),
-    //     //                 new WaitCommand(1)))
-    //     //     .andThen(
-    //     new RunCommand(() -> m_drivetrain.drive(-1, 0, 0, false)).withTimeout(2.5));
+    Shuffleboard.getTab("Swerve").add("Auto", m_autoChooser);
   }
 
   /**
