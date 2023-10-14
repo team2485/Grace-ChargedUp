@@ -9,6 +9,8 @@ import com.ctre.phoenixpro.hardware.Pigeon2;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drivetrain;
@@ -19,7 +21,7 @@ public class DriveToTag extends CommandBase {
   Vision m_vision;
 
   PIDController xController = new PIDController(2, 0, 0);
-  PIDController yController = new PIDController(-1.75, .05, 0);
+  PIDController yController = new PIDController(-1, .05, 0);
   PIDController rotController = new PIDController(-20, 1, 0);
   double desiredX = 0;
   double desiredY = 0;
@@ -39,12 +41,16 @@ public class DriveToTag extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
     Pose3d tagPose = m_vision.getDetectedTagPose();
+    
+
+    
     Pose3d currentPose = m_vision.grabLatestEstimatedPose().estimatedPose;
     if (tagPose != null && currentPose != null) {
       xController.setSetpoint(tagPose.getX());
       yController.setSetpoint(tagPose.getY());
-      rotController.setSetpoint(tagPose.getRotation().getZ() / (2*Math.PI));
+      rotController.setSetpoint(-0.01+(tagPose.getRotation().getZ() / (2*Math.PI)));
 
       desiredX = xController.calculate(currentPose.getX());
       desiredY = yController.calculate(currentPose.getY());

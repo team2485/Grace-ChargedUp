@@ -63,8 +63,8 @@ public class CargoHandlingCommandBuilder {
   }
 
   public static Command getStopFeederCommand(Feeder feeder, Indexer indexer) {
-    return new InstantCommand(() -> feeder.setVelocityRotationsPerSecond(0), feeder)
-        .alongWith(new InstantCommand(() -> indexer.setVelocityRotationsPerSecond(0)));
+    return new InstantCommand(() -> feeder.setVoltage(0), feeder)
+        .alongWith(new InstantCommand(() -> indexer.setVoltage(0)));
   }
 
   public static Command getRunIndexerCommand(Indexer indexer) {
@@ -74,7 +74,7 @@ public class CargoHandlingCommandBuilder {
   }
 
   public static Command getStopIndexerCommand(Indexer indexer) {
-    return new InstantCommand(() -> indexer.setVelocityRotationsPerSecond(0), indexer);
+    return new InstantCommand(() -> indexer.setVoltage(0), indexer);
   }
 
   public static Command runTestCommand(Intake intake, IntakeArm intakeArm, Indexer indexer) {
@@ -93,8 +93,8 @@ public class CargoHandlingCommandBuilder {
   }
 
   public static Command stopIntakeForAutoCommand(Intake intake, Indexer indexer) {
-    return new InstantCommand(() -> intake.setVelocityRotationsPerSecond(0))
-        .alongWith(new InstantCommand(() -> indexer.setVelocityRotationsPerSecond(0)));
+    return new InstantCommand(() -> intake.setVoltage(0))
+        .alongWith(new InstantCommand(() -> indexer.setVoltage(0)));
   }
 
   public static Command outtakeCommand(Intake intake, IntakeArm intakeArm, Indexer indexer, double velocity) {
@@ -130,8 +130,8 @@ public class CargoHandlingCommandBuilder {
   public static Command getStopIntakeCommand(Intake intake, IntakeArm intakeArm, Indexer indexer) {
     return getArmDownCommand(intakeArm)
         .alongWith(
-            new InstantCommand(() -> indexer.setVelocityRotationsPerSecond(0), indexer),
-            new InstantCommand(() -> intake.setVelocityRotationsPerSecond(0), intake));
+            new InstantCommand(() -> indexer.setVoltage(0), indexer),
+            new InstantCommand(() -> intake.setVoltage(0), intake));
   }
 
   public static Command getShooterAutoSetCommand(

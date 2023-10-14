@@ -4,6 +4,8 @@ import static frc.robot.Constants.*;
 import static frc.robot.commands.CargoHandlingCommandBuilder.*;
 
 import java.nio.file.Path;
+
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.pathplanner.lib.PathConstraints;
@@ -15,6 +17,10 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.Timer;
@@ -84,24 +90,33 @@ public class AutoCommandBuilder {
     FeedServo servo,
     Shooter shooter,
     Hood hood) {
+        // Create a list of bezier points from poses. Each pose represents one waypoint. 
+        // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+        // List<Translation2d> bezierPoints = PathPlanner.bezierFromPoses(
+        //     new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0),
+        //     new Pose2d(3.0, 1.0, Rotation2d.fromDegrees(0),
+        //     new Pose2d(5.0, 3.0, Rotation2d.fromDegrees(90)
+        // );
+
+        
+
+        // // Create the path using the bezier points created above
+        // PathPlannerPath path = new PathPlannerPath(
+        //     bezierPoints,
+        //     new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+        //     new GoalEndState(0.0, Rotation2d.fromDegrees(-90) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+        // );
+
         PathConstraints pathConstraints = new PathConstraints(1, 3);
         PathPlannerTrajectory path = PathPlanner.loadPath("BATB_1_Cube", pathConstraints);
-        // SwerveAutoBuilder swerveAutoBuilder = new SwerveAutoBuilder(drivetrain::getPose, 
-        //                                                             drivetrain::resetOdometry, 
-        //                                                             new PIDConstants(Swerve.driveKP, Swerve.driveKI, Swerve.driveKD),
-        //                                                             new PIDConstants(Swerve.angleKP, Swerve.angleKI, Swerve.angleKD), drivetrain::driveAuto, null, 
-        //                                                             drivetrain);
+
         // drivetrain.resetOdometry(path.getInitialHolonomicPose());
-        // return new PPSwerveControllerCommand(path, drivetrain::getPose, 
-        //        new PIDController(Swerve.driveKP, Swerve.driveKI, Swerve.driveKD), 
-        //        new PIDController(Swerve.driveKP, Swerve.driveKI, Swerve.driveKD), 
-        //        new PIDController(Swerve.angleKP, Swerve.angleKI, Swerve.angleKD), drivetrain::driveAuto, drivetrain);
-        // return new PPSwerveControllerCommand(path, drivetrain::getPose, Swerve.swerveKinematics, 
-        //        new PIDController(Swerve.driveKP, Swerve.driveKI, Swerve.driveKD), 
-        //        new PIDController(Swerve.driveKP, Swerve.driveKI, Swerve.driveKD), 
-        //        new PIDController(Swerve.angleKP, Swerve.angleKI, Swerve.angleKD), drivetrain::setModuleStates, drivetrain);
-        WL_SwerveControllerCommand path1 = PathCommandBuilder.getPathSlowCommand(drivetrain, "BATB_1_Cube");
-        return path1;
+        return new PPSwerveControllerCommand(path, drivetrain::getPose, Swerve.swerveKinematics, 
+               new PIDController(1, 0, 0), 
+               new PIDController(1, 0, 0), 
+               new PIDController(1, 0, 0), drivetrain::setModuleStates, drivetrain);
+        //WL_SwerveControllerCommand path1 = PathCommandBuilder.getPathSlowCommand(drivetrain, "BATB_1_Cube");
+        //return path1;
 
         
   }
