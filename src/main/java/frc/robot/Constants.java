@@ -78,9 +78,9 @@ public final class Constants {
     public static final int kDriverPort = 0;
     public static final int kOperatorPort = 1;
 
-    public static final double kDriverRightXDeadband = 0.1;
-    public static final double kDriverLeftXDeadband = 0.1;
-    public static final double kDriverLeftYDeadband = 0.1;
+    public static final double kDriverRightXDeadband = 0.05;
+    public static final double kDriverLeftXDeadband = 0.05;
+    public static final double kDriverLeftYDeadband = 0.05;
 
     public static final double kTriggerThreshold = 0.1;
   }
@@ -852,7 +852,7 @@ public final class Constants {
     /** Meters per Second */
     public static final double maxSpeed = 3; // TODO: This must be tuned to specific robot
     /** Radians per Second */
-    public static final double maxAngularVelocity = 4; // TODO: This must be tuned to specific robot
+    public static final double maxAngularVelocity = 3; // TODO: This must be tuned to specific robot
 
     /* Neutral Modes */
     public static final NeutralMode angleNeutralMode = NeutralMode.Brake;

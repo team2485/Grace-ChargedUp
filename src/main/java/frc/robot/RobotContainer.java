@@ -198,7 +198,7 @@ public class RobotContainer {
     //             m_drivetrain));
 
     m_driver.x().whileTrue(new InstantCommand(m_drivetrain::zeroGyro));
-    m_driver.upperPOV().whileTrue(m_driveToTag);
+    //m_driver.upperPOV().whileTrue(m_driveToTag);
 
   }
 
@@ -238,13 +238,18 @@ public class RobotContainer {
     // m_operator
     //     .getJoystickAxisButton(Axis.kRightTrigger, kTriggerThreshold)
     //     .whileActiveOnce(new InstantCommand(() -> m_hood.setAngleRadians(hoodAngle)));
-    m_operator.leftBumper().onTrue(new InstantCommand(() -> m_hood.setAngleRadians(0)));
+
+    //m_operator.leftBumper().onTrue(new InstantCommand(() -> m_hood.setAngleRadians(0)));
+    m_driver.leftBumper().onTrue(new InstantCommand(() -> m_hood.setAngleRadians(0)));
 
     // m_operator.leftPOV().whileActiveOnce(new InstantCommand(() -> flywheelSpeed--));
     // m_operator.rightPOV().whileActiveOnce(new InstantCommand(() -> flywheelSpeed++));
 
     // m_operator.y().whileTrue(CargoHandlingCommandBuilder.setShooterForShot(m_hood, m_shooter));
-       m_operator.y().onTrue(new InstantCommand(()-> m_hood.setAngleRadians(.3)));
+
+    //m_operator.y().onTrue(new InstantCommand(()-> m_hood.setAngleRadians(.3)));
+    m_driver.y().onTrue(new InstantCommand(()-> m_hood.setAngleRadians(.3)));
+
     //  m_operator.y().whenActive(new InstantCommand(()->m_hood.setAngleRadians(0.16)));
 
     m_operator
@@ -265,14 +270,14 @@ public class RobotContainer {
         .onFalse(
             CargoHandlingCommandBuilder.stopTestCommand(m_intake, m_intakeArm, m_indexer));
 
-    m_driver
-        .y()
-        // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
-        .whileTrue(CargoHandlingCommandBuilder.outtakeCommand(m_intake, m_intakeArm, m_indexer, -10))
-        .onFalse(
-            CargoHandlingCommandBuilder.stopTestCommand(m_intake, m_intakeArm, m_indexer));
+    // m_driver
+    //     .y()
+    //     // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
+    //     .whileTrue(CargoHandlingCommandBuilder.outtakeCommand(m_intake, m_intakeArm, m_indexer, -10))
+    //     .onFalse(
+    //         CargoHandlingCommandBuilder.stopTestCommand(m_intake, m_intakeArm, m_indexer));
 
-    m_operator
+    m_driver
         .lowerPOV()
         // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
         .whileTrue(
@@ -282,7 +287,7 @@ public class RobotContainer {
                         new InstantCommand(() -> m_operator.setRumble(RumbleType.kLeftRumble, 0.5)),
                         new InstantCommand(()->m_operator.setRumble(RumbleType.kLeftRumble, 0)),
                         () -> m_shooter.shooterWithinTolerance())));
-    m_operator
+    m_driver
         .upperPOV()
         // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
         .whileTrue(
@@ -293,7 +298,7 @@ public class RobotContainer {
                         new InstantCommand(()->m_operator.setRumble(RumbleType.kLeftRumble, 0)),
                         () -> m_shooter.shooterWithinTolerance())));
 
-    m_operator
+    m_driver
         .rightBumper()
         // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))
         .whileTrue(CargoHandlingCommandBuilder.getRunFeederCommand(m_feeder, m_indexer))

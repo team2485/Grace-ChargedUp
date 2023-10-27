@@ -56,7 +56,7 @@ public class Shooter extends SubsystemBase {
 
   private VelocityVoltage shooterVelocityVoltage = new VelocityVoltage(0);
   private VelocityVoltage shooterVelocityVoltage2 = new VelocityVoltage(0);
-  private GenericEntry working = Shuffleboard.getTab("Hood").add("isWorking", false).getEntry();
+  private GenericEntry working = Shuffleboard.getTab("Hood").add("currentVelocity", 0.0).getEntry();
 
   /** Creates a new Shooter. Controlled with a feedforward and a bang bang controlller. */
   public Shooter() {
@@ -154,8 +154,8 @@ public class Shooter extends SubsystemBase {
     MotorOutputConfigs motorConfigs = new MotorOutputConfigs();
     motorConfigs.NeutralMode = NeutralModeValue.Coast;
     Slot0Configs shooterPIDConfigs = new Slot0Configs();
-    shooterPIDConfigs.kP = .1;
-    shooterPIDConfigs.kI = 0;
+    shooterPIDConfigs.kP = .5;
+    shooterPIDConfigs.kI = .1;
     shooterPIDConfigs.kD = 0;
     shooterPIDConfigs.kS = 0;
 
@@ -163,8 +163,8 @@ public class Shooter extends SubsystemBase {
     motorConfigs2.NeutralMode = NeutralModeValue.Coast;
     motorConfigs2.Inverted = InvertedValue.Clockwise_Positive;
     Slot0Configs shooterPIDConfigs2 = new Slot0Configs();
-    shooterPIDConfigs2.kP = .1;
-    shooterPIDConfigs2.kI = 0;
+    shooterPIDConfigs2.kP = .5;
+    shooterPIDConfigs2.kI = .1;
     shooterPIDConfigs2.kD = 0;
     shooterPIDConfigs2.kS = 0;
 
@@ -179,9 +179,7 @@ public class Shooter extends SubsystemBase {
   
   public double getShooterVelocityRotationsPerSecond() {
     return m_shooterTalon.getVelocity().getValue()
-        * 10
-        / kShooterGearRatio
-        / kFalconSensorUnitsPerRotation;
+        / kShooterGearRatio;
   }
 
   public void allignToHub() {
@@ -340,5 +338,7 @@ public class Shooter extends SubsystemBase {
     return m_shooterVelocitySetpointRotationsPerSecond;
   }
 
-  public void periodic() {}
+  public void periodic() {
+      working.setDouble(getShooterVelocityRotationsPerSecond());
+  }
 }
