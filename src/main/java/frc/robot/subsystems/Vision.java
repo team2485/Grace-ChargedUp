@@ -61,7 +61,7 @@ public class Vision extends SubsystemBase implements Runnable {
     public void run() {
         if (m_photonPoseEstimator != null && m_camera != null) { // environment and camera must be initialized properly
             var photonResults = m_camera.getLatestResult(); // continuously get latest camera reading
-
+            error.setDouble(-1);
             if (photonResults.hasTargets()
                     && (photonResults.targets.size() >= 1 || photonResults.targets.get(0).getPoseAmbiguity() < 0.2)) { // need accurate readings
                 m_photonPoseEstimator.update(photonResults).ifPresent(estimatedRobotPose -> {

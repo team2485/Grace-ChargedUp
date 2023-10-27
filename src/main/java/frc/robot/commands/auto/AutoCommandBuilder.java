@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.CargoHandlingCommandBuilder;
+import frc.robot.commands.DriveWithController;
 import frc.robot.subsystems.cargoHandling.*;
 import frc.robot.subsystems.drive.*;
 import frc.util.SwerveModuleConstants;
@@ -58,6 +59,31 @@ public class AutoCommandBuilder {
 
   }
 
+  public static Command get1CubeHighMobilityAuto(
+    Drivetrain drivetrain,
+    Intake intake,
+    IntakeArm intakeArm,
+    Indexer indexer,
+    Feeder feeder,
+    FeedServo servo,
+    Shooter shooter,
+    Hood hood) {
+
+  DriveWithController driveWithController = new DriveWithController(()->-.5, ()->0, ()->0, ()->true, drivetrain);
+
+  return new RunCommand(()-> hood.setAngleRadians(.3))
+                          .alongWith(new RunCommand(()-> shooter.setVelocitiesHigh()))
+                          .withTimeout(2)
+                          .andThen(new RunCommand(()-> feeder.setVelocityRotationsPerSecond(4))
+                          .alongWith(new RunCommand(()-> indexer.setVelocityRotationsPerSecond(6))))
+                          .withTimeout(4)
+                          .andThen(new InstantCommand(()-> indexer.setVoltage(0)),
+                          new InstantCommand(()-> feeder.setVoltage(0)),
+                          new InstantCommand(()-> shooter.setShooterVoltage(0)),
+                          new InstantCommand(()-> drivetrain.zeroGyro()),
+                          driveWithController.withTimeout(2.75));
+}
+
   public static Command get1CubeMidAuto(
       Drivetrain drivetrain,
       Intake intake,
@@ -80,6 +106,33 @@ public class AutoCommandBuilder {
                             new InstantCommand(()-> shooter.setShooterVoltage(0)));
 
   }
+
+  public static Command get1CubeMidMobilityAuto(
+    Drivetrain drivetrain,
+    Intake intake,
+    IntakeArm intakeArm,
+    Indexer indexer,
+    Feeder feeder,
+    FeedServo servo,
+    Shooter shooter,
+    Hood hood) {
+
+      DriveWithController driveWithController = new DriveWithController(()->-.5, ()->0, ()->0, ()->true, drivetrain);
+
+
+  return new RunCommand(()-> hood.setAngleRadians(.3))
+                          .alongWith(new RunCommand(()-> shooter.setVelocitiesMid()))
+                          .withTimeout(2)
+                          .andThen(new RunCommand(()-> feeder.setVelocityRotationsPerSecond(4))
+                          .alongWith(new RunCommand(()-> indexer.setVelocityRotationsPerSecond(6))))
+                          .withTimeout(4)
+                          .andThen(new InstantCommand(()-> indexer.setVoltage(0)),
+                          new InstantCommand(()-> feeder.setVoltage(0)),
+                          new InstantCommand(()-> shooter.setShooterVoltage(0)),
+                          new InstantCommand(()-> drivetrain.zeroGyro()),
+                          driveWithController.withTimeout(2.75));
+
+}
 
   public static Command get2CubeAuto(
     Drivetrain drivetrain,

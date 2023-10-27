@@ -116,41 +116,53 @@ public class RobotContainer {
     configureButtonBindings();
     // m_climbElevator.setPositionMeters(0);
 
-    m_autoChooser.setDefaultOption(
-        "1 Cube High",
-        AutoCommandBuilder.get1CubeHighAuto(
-            m_drivetrain,
-            m_intake,
-            m_intakeArm,
-            m_indexer,
-            m_feeder,
-            m_feedServo,
-            m_shooter,
-            m_hood));
-    m_autoChooser.addOption(
-        "1 Cube Low",
-        AutoCommandBuilder.get1CubeMidAuto(
-            m_drivetrain,
-            m_intake,
-            m_intakeArm,
-            m_indexer,
-            m_feeder,
-            m_feedServo,
-            m_shooter,
-            m_hood));
-    m_autoChooser.addOption(
-        "2 Cube",
-        AutoCommandBuilder.get2CubeAuto(
-            m_drivetrain,
-            m_intake,
-            m_intakeArm,
-            m_indexer,
-            m_feeder,
-            m_feedServo,
-            m_shooter,
-            m_hood));
+    // m_autoChooser.setDefaultOption(
+    //     "1 Cube High",
+    //     AutoCommandBuilder.get1CubeHighAuto(
+    //         m_drivetrain,
+    //         m_intake,
+    //         m_intakeArm,
+    //         m_indexer,
+    //         m_feeder,
+    //         m_feedServo,
+    //         m_shooter,
+    //         m_hood));
+    // m_autoChooser.addOption(
+    //     "1 Cube Low",
+    //     AutoCommandBuilder.get1CubeMidAuto(
+    //         m_drivetrain,
+    //         m_intake,
+    //         m_intakeArm,
+    //         m_indexer,
+    //         m_feeder,
+    //         m_feedServo,
+    //         m_shooter,
+    //         m_hood));
+    // m_autoChooser.addOption(
+    //   "1 Cube High Mobility",
+    //   AutoCommandBuilder.get1CubeHighMobilityAuto(
+    //       m_drivetrain,
+    //       m_intake,
+    //       m_intakeArm,
+    //       m_indexer,
+    //       m_feeder,
+    //       m_feedServo,
+    //       m_shooter,
+    //       m_hood));
+    // m_autoChooser.addOption(
+    //   "1 Cube Mid Mobility",
+    //   AutoCommandBuilder.get1CubeMidMobilityAuto(
+    //       m_drivetrain,
+    //       m_intake,
+    //       m_intakeArm,
+    //       m_indexer,
+    //       m_feeder,
+    //       m_feedServo,
+    //       m_shooter,
+    //       m_hood));
 
-    Shuffleboard.getTab("Autonomous").add("Auto", m_autoChooser);
+
+    // Shuffleboard.getTab("Autonomous").add("Auto", m_autoChooser);
     
   }
 

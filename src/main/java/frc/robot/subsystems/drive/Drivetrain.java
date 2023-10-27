@@ -18,19 +18,29 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenixpro.configs.Pigeon2Configuration;
+import com.ctre.phoenixpro.hardware.Pigeon2;
+import edu.wpi.first.math.filter.MedianFilter;
 
 public class Drivetrain extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public WPI_Pigeon2 gyro = new WPI_Pigeon2(Constants.Swerve.pigeonID);
+    //public WPI_Pigeon2 gyro = new WPI_Pigeon2(Constants.Swerve.pigeonID);
+    public Pigeon2 gyro = new Pigeon2(Constants.Swerve.pigeonID);
+    public Pigeon2Configuration config = new Pigeon2Configuration();
+    
 
-    double yaw = gyro.getYaw();
+    double yaw = gyro.getYaw().refresh().getValue();
 
-    GenericEntry target;
+    GenericEntry targetX, targetY, targetRot;
+
+    private MedianFilter filter = new MedianFilter(5);
 
     public Drivetrain() {
-        target = Shuffleboard.getTab("Swerve").add("rotation",0.0).getEntry();
-        gyro.configFactoryDefault();
+        targetX = Shuffleboard.getTab("Swerve").add("movementX",0.0).getEntry();
+        targetY = Shuffleboard.getTab("Swerve").add("movementY",0.0).getEntry();
+        targetRot = Shuffleboard.getTab("Swerve").add("movementRot",0.0).getEntry();
+        //gyro.configFactoryDefault();
         this.zeroGyro();
 
         mSwerveMods = new SwerveModule[] {
@@ -51,7 +61,7 @@ public class Drivetrain extends SubsystemBase {
                                     translation.getX(), 
                                     translation.getY(), 
                                     rotation, 
-                                    Rotation2d.fromDegrees(gyro.getYaw() * -1)
+                                    Rotation2d.fromDegrees(gyro.getYaw().refresh().getValue() * -1)
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
@@ -61,6 +71,10 @@ public class Drivetrain extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
         
         //target.setDouble(translation.getX());
+
+        targetX.setDouble(translation.getX());
+        targetY.setDouble(translation.getY());
+        targetRot.setDouble(rotation);
 
         for(SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -98,7 +112,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getPitch(){
-        return gyro.getRoll() + 4;
+        //return gyro.getRoll() + 4;
+        return gyro.getPitch().refresh().getValue();
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -139,7 +154,7 @@ public class Drivetrain extends SubsystemBase {
 
     
     public Rotation2d getYaw() {
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(filter.calculate(360 - gyro.getYaw().refresh().getValue())) : Rotation2d.fromDegrees(filter.calculate(gyro.getYaw().refresh().getValue()));
     }
 
     public void resetToAbsolute(){

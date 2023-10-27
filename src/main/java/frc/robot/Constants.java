@@ -78,9 +78,9 @@ public final class Constants {
     public static final int kDriverPort = 0;
     public static final int kOperatorPort = 1;
 
-    public static final double kDriverRightXDeadband = 0.2;
-    public static final double kDriverLeftXDeadband = 0.2;
-    public static final double kDriverLeftYDeadband = 0.2;
+    public static final double kDriverRightXDeadband = 0.1;
+    public static final double kDriverLeftXDeadband = 0.1;
+    public static final double kDriverLeftYDeadband = 0.1;
 
     public static final double kTriggerThreshold = 0.1;
   }
@@ -839,7 +839,7 @@ public final class Constants {
 
     /* Drive Motor PID Values */
     public static final double driveKP = 2.5;
-    public static final double driveKI = 0;
+    public static final double driveKI = 3;
     public static final double driveKD = 0.0;
     public static final double driveKF = 0.0;
 
