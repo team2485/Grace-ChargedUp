@@ -14,6 +14,8 @@ import java.time.Instant;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -116,53 +118,53 @@ public class RobotContainer {
     configureButtonBindings();
     // m_climbElevator.setPositionMeters(0);
 
-    // m_autoChooser.setDefaultOption(
-    //     "1 Cube High",
-    //     AutoCommandBuilder.get1CubeHighAuto(
-    //         m_drivetrain,
-    //         m_intake,
-    //         m_intakeArm,
-    //         m_indexer,
-    //         m_feeder,
-    //         m_feedServo,
-    //         m_shooter,
-    //         m_hood));
-    // m_autoChooser.addOption(
-    //     "1 Cube Low",
-    //     AutoCommandBuilder.get1CubeMidAuto(
-    //         m_drivetrain,
-    //         m_intake,
-    //         m_intakeArm,
-    //         m_indexer,
-    //         m_feeder,
-    //         m_feedServo,
-    //         m_shooter,
-    //         m_hood));
-    // m_autoChooser.addOption(
-    //   "1 Cube High Mobility",
-    //   AutoCommandBuilder.get1CubeHighMobilityAuto(
-    //       m_drivetrain,
-    //       m_intake,
-    //       m_intakeArm,
-    //       m_indexer,
-    //       m_feeder,
-    //       m_feedServo,
-    //       m_shooter,
-    //       m_hood));
-    // m_autoChooser.addOption(
-    //   "1 Cube Mid Mobility",
-    //   AutoCommandBuilder.get1CubeMidMobilityAuto(
-    //       m_drivetrain,
-    //       m_intake,
-    //       m_intakeArm,
-    //       m_indexer,
-    //       m_feeder,
-    //       m_feedServo,
-    //       m_shooter,
-    //       m_hood));
+    m_autoChooser.setDefaultOption(
+        "1 Cube High",
+        AutoCommandBuilder.get1CubeHighAuto(
+            m_drivetrain,
+            m_intake,
+            m_intakeArm,
+            m_indexer,
+            m_feeder,
+            m_feedServo,
+            m_shooter,
+            m_hood));
+    m_autoChooser.addOption(
+        "1 Cube Low",
+        AutoCommandBuilder.get1CubeMidAuto(
+            m_drivetrain,
+            m_intake,
+            m_intakeArm,
+            m_indexer,
+            m_feeder,
+            m_feedServo,
+            m_shooter,
+            m_hood));
+    m_autoChooser.addOption(
+      "1 Cube High Mobility",
+      AutoCommandBuilder.get1CubeHighMobilityAuto(
+          m_drivetrain,
+          m_intake,
+          m_intakeArm,
+          m_indexer,
+          m_feeder,
+          m_feedServo,
+          m_shooter,
+          m_hood));
+    m_autoChooser.addOption(
+      "1 Cube Mid Mobility",
+      AutoCommandBuilder.get1CubeMidMobilityAuto(
+          m_drivetrain,
+          m_intake,
+          m_intakeArm,
+          m_indexer,
+          m_feeder,
+          m_feedServo,
+          m_shooter,
+          m_hood));
 
 
-    // Shuffleboard.getTab("Autonomous").add("Auto", m_autoChooser);
+    Shuffleboard.getTab("Autonomous").add("Auto", m_autoChooser);
     
   }
 
@@ -287,6 +289,10 @@ public class RobotContainer {
                         new InstantCommand(() -> m_operator.setRumble(RumbleType.kLeftRumble, 0.5)),
                         new InstantCommand(()->m_operator.setRumble(RumbleType.kLeftRumble, 0)),
                         () -> m_shooter.shooterWithinTolerance())));
+
+    m_driver.leftPOV().whileTrue(new DrivePath(new Translation2d(1, 0), m_drivetrain, m_driver::getRightX));
+    m_driver.rightPOV().onTrue(new InstantCommand(()->m_drivetrain.resetOdometry(new Pose2d())));
+
     m_driver
         .upperPOV()
         // .and(m_climbStateMachine.getClimbStateTrigger((ClimbState.kNotClimbing)))

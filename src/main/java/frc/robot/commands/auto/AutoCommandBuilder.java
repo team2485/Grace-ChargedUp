@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.CargoHandlingCommandBuilder;
+import frc.robot.commands.DriveAuto;
 import frc.robot.commands.DriveWithController;
 import frc.robot.subsystems.cargoHandling.*;
 import frc.robot.subsystems.drive.*;
@@ -69,7 +70,7 @@ public class AutoCommandBuilder {
     Shooter shooter,
     Hood hood) {
 
-  DriveWithController driveWithController = new DriveWithController(()->-.5, ()->0, ()->0, ()->true, drivetrain);
+  DriveAuto driveAuto = new DriveAuto(()->-.5, ()->0, ()->0, ()->true, drivetrain);
 
   return new RunCommand(()-> hood.setAngleRadians(.3))
                           .alongWith(new RunCommand(()-> shooter.setVelocitiesHigh()))
@@ -81,7 +82,7 @@ public class AutoCommandBuilder {
                           new InstantCommand(()-> feeder.setVoltage(0)),
                           new InstantCommand(()-> shooter.setShooterVoltage(0)),
                           new InstantCommand(()-> drivetrain.zeroGyro()),
-                          driveWithController.withTimeout(2.75));
+                          driveAuto.withTimeout(1));
 }
 
   public static Command get1CubeMidAuto(

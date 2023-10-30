@@ -72,9 +72,8 @@ public class Drivetrain extends SubsystemBase {
         
         //target.setDouble(translation.getX());
 
-        targetX.setDouble(translation.getX());
-        targetY.setDouble(translation.getY());
-        targetRot.setDouble(rotation);
+        targetX.setDouble(getPoseX());
+        targetY.setDouble(getPoseY());
 
         for(SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -165,7 +164,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic(){
-        swerveOdometry.update(getYaw(), getModulePositions());  
+        swerveOdometry.update(getYaw().times(-1), getModulePositions());  
 
     //     for(SwerveModule mod : mSwerveMods){
     //         SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
