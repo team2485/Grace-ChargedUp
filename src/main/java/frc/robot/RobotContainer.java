@@ -290,7 +290,7 @@ public class RobotContainer {
                         new InstantCommand(()->m_operator.setRumble(RumbleType.kLeftRumble, 0)),
                         () -> m_shooter.shooterWithinTolerance())));
 
-    m_driver.leftPOV().whileTrue(new DrivePath(new Translation2d(1, 0), m_drivetrain, m_driver::getRightX));
+    m_driver.leftPOV().whileTrue(new DrivePath(new Translation2d(0, 0), m_drivetrain, m_driver::getRightX));
     m_driver.rightPOV().onTrue(new InstantCommand(()->m_drivetrain.resetOdometry(new Pose2d())));
 
     m_driver

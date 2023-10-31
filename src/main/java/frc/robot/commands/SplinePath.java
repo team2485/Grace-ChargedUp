@@ -14,10 +14,11 @@ public class SplinePath {
     private ArrayList<Translation2dWithTimestamp> interpolationList = new ArrayList<Translation2dWithTimestamp>();
     
     
-    public SplinePath(Translation2d pointA, Translation2d pointB) {
+    public SplinePath(Translation2d pointA, Translation2d midPoint, Translation2d pointB) {
         Translation2d startPoint = new Translation2d(pointA.getX() + .01, pointA.getY() + .01);
         pointList.add(startPoint);
         pointList.add(pointA);
+        pointList.add(midPoint);
         pointList.add(pointB);
         Translation2d endPoint = new Translation2d(pointB.getX() + .01, pointB.getY() + .01);
         pointList.add(endPoint);
@@ -25,7 +26,7 @@ public class SplinePath {
     
     public void drawPath() {
         interpolationList.clear();
-        for (int i = 0; i < pointList.size() - 3; i+=1) {
+        for (int i = 0; i < pointList.size() - 3; i++) {
             generate(new Translation2d[]{pointList.get(i), pointList.get(i+1), pointList.get(i+2), pointList.get(i+3)});
         }
         // for (double i = 0; i < 1; i+=.1) {
